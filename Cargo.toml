@@ -1,6 +1,40 @@
 [package]
 name = "recall"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
+description = "A cross-platform CLI tool that logs every terminal command you run — searchable, persistent history across shells and sessions."
+authors = ["Clifftech Solutions"]
+license = "MIT"
+repository = "https://github.com/clifftech/recall"
+keywords = ["cli", "history", "shell", "terminal", "sqlite"]
+categories = ["command-line-utilities"]
+readme = "README.md"
+
+[[bin]]
+name = "recall"
+path = "src/main.rs"
 
 [dependencies]
+clap = { version = "4", features = ["derive"] }
+clap_complete = "4"
+rusqlite = { version = "0.31", features = ["bundled", "fts5"] }
+chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+csv = "1"
+colored = "2"
+comfy-table = "7"
+dirs = "5"
+thiserror = "1"
+hostname = "0.4"
+
+[dev-dependencies]
+assert_cmd = "2"
+predicates = "3"
+tempfile = "3"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
