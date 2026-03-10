@@ -18,20 +18,15 @@ pub struct Command {
 pub struct Stats {
     pub total_commands: u64,
     pub unique_commands: u64,
-    pub date_range: (String, String),         // earliest, latest
-    pub top_commands: Vec<(String, u64)>,     // command → count
-    pub commands_per_day: Vec<(String, u64)>, // date → count
-    pub most_active_hours: Vec<(u8, u64)>,    // hour → count
-    pub error_rate: f64,                      // percentage of non-zero exit codes
-    pub top_directories: Vec<(String, u64)>,  // cwd → count
+    pub date_range: (String, String),     // earliest, latest
+    pub top_commands: Vec<(String, u64)>, // command → count
+
+    pub most_active_hours: Vec<(u8, u64)>,   // hour → count
+    pub error_rate: f64,                     // percentage of non-zero exit codes
+    pub top_directories: Vec<(String, u64)>, // cwd → count
 }
 
 impl Command {
-    /// Returns true if this command exited with a non-zero exit code.
-    pub fn is_error(&self) -> bool {
-        self.exit_code != 0
-    }
-
     /// Returns a human-readable relative time string such as "3 minutes ago".
     pub fn relative_time(&self) -> String {
         let now = Utc::now();
