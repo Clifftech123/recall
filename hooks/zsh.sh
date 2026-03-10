@@ -1,3 +1,4 @@
+# >>> recall hook start >>>
 # Captures the last command from zsh history using fc -ln -1, which prints
 # the last history entry without a line number (the -n flag strips it).
 # This is the zsh equivalent of bash's "history 1 | sed ..." approach.
@@ -22,3 +23,4 @@ __recall_precmd() {
 # because it handles deduplication and does not break other precmd hooks.
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd __recall_precmd
+# <<< recall hook end <<<

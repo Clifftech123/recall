@@ -1,4 +1,5 @@
 use thiserror::Error;
+
 #[derive(Error, Debug)]
 pub enum RecallErrors {
     #[error("Database error: {0}")]
@@ -34,6 +35,9 @@ pub enum RecallErrors {
 
     #[error("Invalid date format: '{input}'. Use YYYY-MM-DD or RFC3339.")]
     InvalidDate { input: String },
+
+    #[error("Unknown export format '{input}'. Use: json, csv, text")]
+    InvalidFormat { input: String },
 
     #[error("Cannot use --all with --from or --to. Choose one approach.")]
     ConflictingCleanFlags,

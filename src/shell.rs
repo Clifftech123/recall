@@ -143,17 +143,18 @@ pub fn is_hook_installed(content: &str) -> bool {
 
 /// Appends the hook block to `content` and returns the new string.
 ///
-/// The script is wrapped between [`HOOK_START`] and [`HOOK_END`] markers so
-/// that [`remove_hook`] can find and strip the exact block later. A single
-/// blank line is inserted before the block to visually separate it from any
-/// existing content in the config file.
+/// The script files in `hooks/` already contain the [`HOOK_START`] and
+/// [`HOOK_END`] markers — this function just appends the full script as-is.
+/// A single blank line is inserted before the block to visually separate it
+/// from any existing content in the config file.
 ///
 /// # Example
 ///
-/// Given an existing `.bashrc` and a bash hook script, the appended block
-/// will look like:
+/// Given an existing `.bashrc` and a bash hook script, the result is:
 ///
 /// ```text
+/// # existing content ...
+///
 /// # >>> recall hook start >>>
 /// <script content>
 /// # <<< recall hook end <<<
@@ -166,14 +167,7 @@ pub fn install_hook(content: &str, script: &str) -> String {
         "\n\n"
     };
 
-    format!(
-        "{}{}{}\n{}\n{}\n",
-        content,
-        separator,
-        HOOK_START,
-        script.trim(),
-        HOOK_END,
-    )
+    format!("{}{}{}\n", content, separator, script.trim())
 }
 
 /// Removes the hook block from `content` and returns the cleaned string.
