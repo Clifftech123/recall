@@ -1,3 +1,4 @@
+# >>> recall hook start >>>
 # Captures the last command from bash history, strips the history number
 # prefix (e.g. "  42  git status" → "git status"), then logs it via recall.
 #
@@ -22,3 +23,4 @@ __recall_precmd() {
 if [[ ! "$PROMPT_COMMAND" == *"__recall_precmd"* ]]; then
     PROMPT_COMMAND="__recall_precmd;${PROMPT_COMMAND:-}"
 fi
+# <<< recall hook end <<<

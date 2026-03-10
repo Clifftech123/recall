@@ -1,3 +1,4 @@
+# >>> recall hook start >>>
 # Captures the last command from fish using the fish_postexec event.
 # fish_postexec fires automatically after every command completes and
 # passes the command string as $argv[1] — no history parsing needed.
@@ -17,3 +18,4 @@ function __recall_post_exec --on-event fish_postexec
         recall log "$last_cmd" --exit-code $exit_code --cwd (pwd) --session %self --shell fish 2>/dev/null &
     end
 end
+# <<< recall hook end <<<
