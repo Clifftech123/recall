@@ -334,21 +334,18 @@ impl Database {
     /// Returns [`RecallErrors::Database`] if any aggregation query fails.
     pub fn stats(&self, top: u64) -> Result<Stats, RecallErrors> {
         let total_commands = self.stats_total();
-
         let unique_commands = self.stats_unique();
         let date_range = self.stats_date_range();
         let error_rate = self.stats_error_rate(total_commands);
         let top_commands = self.stats_top_commands(top)?;
         let top_directories = self.stats_top_directories(top)?;
         let most_active_hours = self.stats_active_hours()?;
-        let commands_per_day = self.stats_commands_per_day()?;
 
         Ok(Stats {
             total_commands,
             unique_commands,
             date_range,
             top_commands,
-            commands_per_day,
             most_active_hours,
             error_rate,
             top_directories,
@@ -376,11 +373,14 @@ impl Database {
             .unwrap_or(0)
     }
 
-    /// Earliest and latest timestamps as ISO 8601 strings.
+    /// Earliest and latest timestamps formatted as YYYY-MM-DD.
     fn stats_date_range(&self) -> (String, String) {
         self.conn
             .query_row(
-                "SELECT MIN(timestamp), MAX(timestamp) FROM commands",
+                "SELECT
+                    COALESCE(strftime('%Y-%m-%d', MIN(timestamp)), ''),
+                    COALESCE(strftime('%Y-%m-%d', MAX(timestamp)), '')
+                 FROM commands",
                 [],
                 |r| {
                     Ok((
@@ -455,21 +455,6 @@ impl Database {
         )?;
         let rows = stmt
             .query_map([], |r| Ok((r.get::<_, u8>(0)?, r.get::<_, u64>(1)?)))?
-            .collect::<Result<Vec<_>, _>>()
-            .map_err(RecallErrors::Database);
-        rows
-    }
-
-    /// Command counts grouped by calendar date, ordered oldest to newest.
-    fn stats_commands_per_day(&self) -> Result<Vec<(String, u64)>, RecallErrors> {
-        let mut stmt = self.conn.prepare(
-            "SELECT strftime('%Y-%m-%d', timestamp) as day, COUNT(*) as cnt
-             FROM commands
-             GROUP BY day
-             ORDER BY day ASC",
-        )?;
-        let rows = stmt
-            .query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, u64>(1)?)))?
             .collect::<Result<Vec<_>, _>>()
             .map_err(RecallErrors::Database);
         rows
